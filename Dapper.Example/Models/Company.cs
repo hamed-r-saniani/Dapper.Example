@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Dapper.Example.Models
 {
@@ -11,5 +12,6 @@ namespace Dapper.Example.Models
         public string City { get; set; }
         public string State { get; set; }
         public string PostalCode { get; set; }
+        public virtual List<Employee> Employees { get; set; }
     }
 }
