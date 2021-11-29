@@ -1,6 +1,7 @@
 ﻿using Dapper.Example.Models;
 using Dapper.Example.Repository;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
@@ -45,6 +46,7 @@ namespace Dapper.Example.Controllers
         // GET: Employees/Create
         public IActionResult Create()
         {
+            ViewBag.CompanyId = new SelectList(_companyRepository.GetAll(), "CompanyId", "Name");
             return View();
         }
 
@@ -61,6 +63,7 @@ namespace Dapper.Example.Controllers
                 _employeeRepository.Add(Employee);
                 return RedirectToAction(nameof(Index));
             }
+            ViewBag.CompanyId = new SelectList(_companyRepository.GetAll(), "CompanyId", "Name");
             return View(Employee);
         }
 
@@ -73,6 +76,7 @@ namespace Dapper.Example.Controllers
             }
 
             Employee = _employeeRepository.Find(id.Value);
+            ViewBag.CompanyId = new SelectList(_companyRepository.GetAll(), "CompanyId", "Name",Employee.CompanyId);
             if (Employee == null)
             {
                 return NotFound();
@@ -111,6 +115,7 @@ namespace Dapper.Example.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewBag.CompanyId = new SelectList(_companyRepository.GetAll(), "CompanyId", "Name");
             return View(Employee);
         }
 
