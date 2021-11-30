@@ -28,7 +28,8 @@ namespace Dapper.Example
         {
             services.AddControllersWithViews();
             //services.AddScoped<ICompanyRepository, CompanyRepository>();
-            services.AddScoped<ICompanyRepository, CompanyRepositoryDapper>();
+            //services.AddScoped<ICompanyRepository, CompanyRepositoryDapper>();
+            services.AddScoped<ICompanyRepository, CompanyRepositoryDapperSP>();
             services.AddScoped<IEmployeeRepository, EmployeeRepositoryDapper>();
             services.AddDbContext<ApplicationDbContext>(options =>
             {

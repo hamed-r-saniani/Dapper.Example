@@ -7,10 +7,10 @@ using System.Linq;
 
 namespace Dapper.Example.Repository
 {
-    public class CompanyRepositoryDapper : ICompanyRepository
+    public class CompanyRepositoryDapperSP : ICompanyRepository
     {
         private IDbConnection db;
-        public CompanyRepositoryDapper(IConfiguration configuration)
+        public CompanyRepositoryDapperSP(IConfiguration configuration)
         {
             db = new SqlConnection(configuration.GetConnectionString("DapperExample"));
         }
@@ -22,7 +22,7 @@ namespace Dapper.Example.Repository
             company.CompanyId = id;
             return company;
         }
- 
+
         public void Delete(int id)
         {
             string query = "Delete From Companies Where CompanyId = @Id";
@@ -31,16 +31,14 @@ namespace Dapper.Example.Repository
 
         public Company Find(int id)
         {
-            string query = "Select * From Companies Where CompanyId = @CompanyId";
-            return db.Query<Company>(query, new { @CompanyId = id }).SingleOrDefault();
+            return db.Query<Company>("usp_GetCompany", new { CompanyId  = id},commandType:CommandType.StoredProcedure).SingleOrDefault();
         }
 
         public List<Company> GetAll()
         {
-            string query = "Select * From Companies";
-            return db.Query<Company>(query).ToList();
+            return db.Query<Company>("usp_GetAllCompany",commandType:CommandType.StoredProcedure).ToList();
         }
-        
+
         public bool IsExists(int id)
         {
             var company = Find(id);
