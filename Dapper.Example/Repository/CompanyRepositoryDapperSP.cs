@@ -16,17 +16,21 @@ namespace Dapper.Example.Repository
         }
         public Company Add(Company company)
         {
-            string query = "Insert Into Companies(Name,Address,City,State,PostalCode) values(@Name,@Address,@City,@State,@PostalCode)" +
-                "Select CAST(SCOPE_IDENTITY() as int)";
-            var id = db.Query<int>(query, new { @Name = company.Name, @Address = company.Address, @City = company.City, @State = company.State, @PostalCode = company.PostalCode }).SingleOrDefault();
-            company.CompanyId = id;
+            var parameters = new DynamicParameters();
+            parameters.Add("@CompanyId", 0,DbType.Int32,direction:ParameterDirection.Output);
+            parameters.Add("@Name", company.Name);
+            parameters.Add("@Address", company.Address);
+            parameters.Add("@City",company.City);
+            parameters.Add("@State", company.State);
+            parameters.Add("@PostalCode", company.PostalCode);
+            db.Execute("usp_AddCompany", parameters, commandType: CommandType.StoredProcedure);
+            company.CompanyId = parameters.Get<int>("CompanyId");
             return company;
         }
 
         public void Delete(int id)
         {
-            string query = "Delete From Companies Where CompanyId = @Id";
-            db.Execute(query, new { id });
+            db.Execute("usp_DeleteCompany", new {CompanyId = id},commandType:CommandType.StoredProcedure);
         }
 
         public Company Find(int id)
@@ -47,8 +51,14 @@ namespace Dapper.Example.Repository
 
         public Company Update(Company company)
         {
-            string query = "Update Companies SET Name = @Name,Address = @Address,City = @City,State = @State,PostalCode = @PostalCode Where CompanyId = @CompanyId";
-            db.Execute(query, company);
+            var parameters = new DynamicParameters();
+            parameters.Add("@CompanyId", company.CompanyId, DbType.Int32);
+            parameters.Add("@Name", company.Name);
+            parameters.Add("@Address", company.Address);
+            parameters.Add("@City", company.City);
+            parameters.Add("@State", company.State);
+            parameters.Add("@PostalCode", company.PostalCode);
+            db.Execute("usp_UpdateCompany", parameters, commandType: CommandType.StoredProcedure);
             return company;
         }
     }
