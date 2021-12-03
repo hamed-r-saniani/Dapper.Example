@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using Dapper.Contrib.Extensions;
+using System.Collections.Generic;
+
+
 
 namespace Dapper.Example.Models
 {
+    [Table("Companies")]
     public class Company
     {
         [Key]
@@ -12,6 +15,7 @@ namespace Dapper.Example.Models
         public string City { get; set; }
         public string State { get; set; }
         public string PostalCode { get; set; }
+        [Write(false)]
         public virtual List<Employee> Employees { get; set; }
     }
 }
