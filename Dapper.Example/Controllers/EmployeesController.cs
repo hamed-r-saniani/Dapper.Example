@@ -3,6 +3,7 @@ using Dapper.Example.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Dapper.Example.Controllers
@@ -11,11 +12,13 @@ namespace Dapper.Example.Controllers
     {
         private readonly IEmployeeRepository _employeeRepository;
         private readonly ICompanyRepository _companyRepository;
-        
-        public EmployeesController(IEmployeeRepository context, ICompanyRepository companyRepository)
+        private readonly IBonusRepository _bonusRepository;
+
+        public EmployeesController(IEmployeeRepository context, ICompanyRepository companyRepository, IBonusRepository bonusRepository)
         {
             _employeeRepository = context;
             _companyRepository = companyRepository;
+            _bonusRepository = bonusRepository;
         }
         [BindProperty]
         public Employee Employee { get; set; }
@@ -23,7 +26,13 @@ namespace Dapper.Example.Controllers
         // GET: Employees
         public async Task<IActionResult> Index()
         {
-            return View(_employeeRepository.GetAll());
+            //List<Employee> employees = _employeeRepository.GetAll();
+            //foreach (Employee item in employees)
+            //{
+            //    item.Company = _companyRepository.Find(item.CompanyId);
+            //}
+
+            return View(_bonusRepository.GetEmployeesWithCompany());
         }
 
         // GET: Employees/Details/5
