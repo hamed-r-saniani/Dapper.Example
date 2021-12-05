@@ -46,3 +46,37 @@
     <a asp-action="Edit" asp-route-id="@Model.CompanyId">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>
+<hr />
+<div class="container pt-2">
+   <div class="row py-2">
+       <h3>Employees Details</h3>
+   </div>
+   <div class="row">
+        @if(Model.Employees.Count() > 0)
+        {
+            <table class="table">
+                <thead>
+                    <tr>Name</tr>
+                    <tr>Email</tr>
+                    <tr>Phone</tr>
+                    <tr>Title</tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Employees)
+                   {
+                       <tr>
+                           <td>@item.Name</td>
+                           <td>@item.Email</td>
+                           <td>@item.Phone</td>
+                           <td>@item.Title</td>
+                       </tr>
+                   }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p>No Employee Exists ...</p>
+        }
+    </div>
+</div>

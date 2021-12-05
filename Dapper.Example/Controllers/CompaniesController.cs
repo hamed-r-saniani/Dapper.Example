@@ -10,10 +10,12 @@ namespace Dapper.Example.Controllers
     public class CompaniesController : Controller
     {
         private readonly ICompanyRepository _context;
+        private readonly IBonusRepository _bonusRepository;
 
-        public CompaniesController(ICompanyRepository context)
+        public CompaniesController(ICompanyRepository context, IBonusRepository bonusRepository)
         {
             _context = context;
+            _bonusRepository = bonusRepository;
         }
 
         // GET: Companies
@@ -30,7 +32,7 @@ namespace Dapper.Example.Controllers
                 return NotFound();
             }
 
-            var company = _context.Find(id.Value);
+            var company = _bonusRepository.GetCompanyWithEmployees(id.Value);
             if (company == null)
             {
                 return NotFound();
