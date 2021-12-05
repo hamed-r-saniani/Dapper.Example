@@ -24,7 +24,7 @@ namespace Dapper.Example.Controllers
         public Employee Employee { get; set; }
 
         // GET: Employees
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int id = 0)
         {
             //List<Employee> employees = _employeeRepository.GetAll();
             //foreach (Employee item in employees)
@@ -32,7 +32,7 @@ namespace Dapper.Example.Controllers
             //    item.Company = _companyRepository.Find(item.CompanyId);
             //}
 
-            return View(_bonusRepository.GetEmployeesWithCompany());
+            return View(_bonusRepository.GetEmployeesWithCompany(id));
         }
 
         // GET: Employees/Details/5
@@ -85,7 +85,7 @@ namespace Dapper.Example.Controllers
             }
 
             Employee = _employeeRepository.Find(id.Value);
-            ViewBag.CompanyId = new SelectList(_companyRepository.GetAll(), "CompanyId", "Name",Employee.CompanyId);
+            ViewBag.CompanyId = new SelectList(_companyRepository.GetAll(), "CompanyId", "Name", Employee.CompanyId);
             if (Employee == null)
             {
                 return NotFound();
