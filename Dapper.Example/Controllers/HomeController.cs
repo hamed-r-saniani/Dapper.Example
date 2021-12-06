@@ -1,4 +1,5 @@
 ﻿using Dapper.Example.Models;
+using Dapper.Example.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -12,15 +13,17 @@ namespace Dapper.Example.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IBonusRepository _bonusRepository;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IBonusRepository bonusRepository)
         {
             _logger = logger;
+            _bonusRepository = bonusRepository;
         }
 
         public IActionResult Index()
         {
-            return View();
+            return View(_bonusRepository.GetAllCompanyWithEmployees());
         }
 
         public IActionResult Privacy()
