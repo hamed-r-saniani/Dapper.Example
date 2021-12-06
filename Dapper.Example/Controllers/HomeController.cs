@@ -36,5 +36,35 @@ namespace Dapper.Example.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+        public IActionResult AddRecords()
+        {
+            Company company = new Company()
+            {
+                Name = "Test" + Guid.NewGuid().ToString(),
+                Address = "Test Address",
+                City = "Test City",
+                PostalCode = "Test PostalCode",
+                State = "Test State",
+                Employees = new List<Employee>()
+            };
+
+            company.Employees.Add(new Employee()
+            {
+                Name = "Test" + Guid.NewGuid().ToString(),
+                Email = "Test Email",
+                Phone = "Test Phone",
+                Title = "Test Title"
+            });
+            company.Employees.Add(new Employee()
+            {
+                Name = "Test" + Guid.NewGuid().ToString(),
+                Email = "Test Email 2",
+                Phone = "Test Phone 2",
+                Title = "Test Title 2"
+            });
+            _bonusRepository.AddTestRecords(company);
+
+            return RedirectToAction("Index");
+        }
     }
 }

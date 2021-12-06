@@ -15,6 +15,23 @@ namespace Dapper.Example.Repository
             db = new SqlConnection(configuration.GetConnectionString("DapperExample"));
         }
 
+        public void AddTestRecords(Company command)
+        {
+            string query = "Insert Into Companies (Name,Address,City,State,PostalCode) values(@Name,@Address,@City,@State,@PostalCode);"
+                + "Select CAST(SCOPE_IDENTITY() AS int);";
+            int id = db.Query<int>(query,command).SingleOrDefault();
+            command.CompanyId = id;
+
+            foreach (var item in command.Employees)
+            {
+                item.CompanyId = command.CompanyId;
+                string queryEm = "Insert Into Employees(Name,Email,Phone,Title,CompanyId) values(@Name,@Email,@Phone,@Title,@CompanyId);"
+                    + "Select CAST(SCOPE_IDENTITY() AS int);";
+
+                int employeeId =  db.Query<int>(queryEm, item).SingleOrDefault();
+            }
+        }
+
         public List<Company> GetAllCompanyWithEmployees()
         {
             string query = "Select C.*,E.* From Employees AS E INNER JOIN Companies AS C ON E.CompanyId = C.CompanyId";

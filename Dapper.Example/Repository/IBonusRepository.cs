@@ -8,5 +8,6 @@ namespace Dapper.Example.Repository
         List<Employee> GetEmployeesWithCompany(int id);
         Company GetCompanyWithEmployees(int id);
         List<Company> GetAllCompanyWithEmployees();
+        void AddTestRecords(Company command);
     }
 }

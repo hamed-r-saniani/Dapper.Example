@@ -3,6 +3,10 @@
     ViewData["Title"] = "Home Page";
 }
 
+<div class="row">
+    <a class="btn btn-success" asp-action="AddRecords">Add Test Records</a>
+</div>
+
 @foreach (var item in Model)
 {
         <h1>@item.Name</h1>
