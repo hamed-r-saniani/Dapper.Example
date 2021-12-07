@@ -21,8 +21,12 @@ namespace Dapper.Example.Controllers
             _bonusRepository = bonusRepository;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string search)
         {
+            if (!string.IsNullOrEmpty(search))
+            { 
+                return View(_bonusRepository.GetCompanyBy(search));
+            }
             return View(_bonusRepository.GetAllCompanyWithEmployees());
         }
 
@@ -64,6 +68,12 @@ namespace Dapper.Example.Controllers
             });
             _bonusRepository.AddTestRecords(company);
 
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult RemoveRecords(int id)
+        {
+            _bonusRepository.RemoveTestRecords(id);
             return RedirectToAction("Index");
         }
     }

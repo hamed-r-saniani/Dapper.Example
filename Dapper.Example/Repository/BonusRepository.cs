@@ -52,6 +52,11 @@ namespace Dapper.Example.Repository
             return company.Distinct().ToList(); 
         }
 
+        public List<Company> GetCompanyBy(string name)
+        {
+            return db.Query<Company>($"Select * From Companies Where Name Like '%' + @Name + '%'", new {Name = name}).ToList();
+        }
+
         public Company GetCompanyWithEmployees(int id)
         {
             var parameters = new
@@ -87,6 +92,11 @@ namespace Dapper.Example.Repository
             }, new { id }, splitOn: "CompanyId");//Last Employee is Output
 
             return employee.ToList();
+        }
+
+        public void RemoveTestRecords(int id)
+        {
+            db.Query($"Delete From Employees Where CompanyId = {id} ; Delete From Companies Where CompanyId = {id}");
         }
     }
 }

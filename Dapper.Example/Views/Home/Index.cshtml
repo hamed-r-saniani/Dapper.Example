@@ -4,18 +4,26 @@
 }
 
 <div class="row">
-    <a class="btn btn-success" asp-action="AddRecords">Add Test Records</a>
+    <a class="btn btn-success" asp-action="AddRecords">Add Test Record</a>    
 </div>
+<br />
+<form class="form-inline" method="get">
+        <input type="search" placeholder="Enter Name ..." name="search" class="form-control"/>
+        <input type="submit" value="search" class="btn btn-info"/>
+</form>
 
 @foreach (var item in Model)
 {
-        <h1>@item.Name</h1>
+        <h1>@item.Name <a class="btn btn-success" asp-action="RemoveRecords" asp-route-id="@item.CompanyId">Remove</a></h1>
          <table class="table">
                     <thead>
-                        <tr>Name</tr>
-                        <tr>Email</tr>
-                        <tr>Phone</tr>
-                        <tr>Title</tr>
+                        <tr>
+                            <th>Name</th>
+                           <th>Email</th>
+                           <th>Phone</th>
+                           <th>Title</th>
+                        </tr>
+
                     </thead>
                     <tbody>
             @foreach (var employee in item.Employees)
