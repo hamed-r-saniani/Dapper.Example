@@ -22,14 +22,23 @@ namespace Dapper.Example.Repository
             int id = db.Query<int>(query,command).SingleOrDefault();
             command.CompanyId = id;
 
-            foreach (var item in command.Employees)
-            {
-                item.CompanyId = command.CompanyId;
-                string queryEm = "Insert Into Employees(Name,Email,Phone,Title,CompanyId) values(@Name,@Email,@Phone,@Title,@CompanyId);"
-                    + "Select CAST(SCOPE_IDENTITY() AS int);";
+            //foreach (var item in command.Employees)
+            //{
+            //    item.CompanyId = command.CompanyId;
+            //    string queryEm = "Insert Into Employees(Name,Email,Phone,Title,CompanyId) values(@Name,@Email,@Phone,@Title,@CompanyId);"
+            //        + "Select CAST(SCOPE_IDENTITY() AS int);";
 
-                int employeeId =  db.Query<int>(queryEm, item).SingleOrDefault();
-            }
+            //    int employeeId =  db.Query<int>(queryEm, item).SingleOrDefault();
+            //}
+
+            command.Employees.Select(c =>
+            {
+                c.CompanyId = id;
+                return c;
+            }).ToList();
+            string queryEm = "Insert Into Employees(Name,Email,Phone,Title,CompanyId) values(@Name,@Email,@Phone,@Title,@CompanyId);"
+                             + "Select CAST(SCOPE_IDENTITY() AS int);";
+            db.Execute(queryEm,command.Employees);
         }
 
         public List<Company> GetAllCompanyWithEmployees()
@@ -53,7 +62,7 @@ namespace Dapper.Example.Repository
         }
 
         public List<Company> GetCompanyBy(string name)
-        {
+        { 
             return db.Query<Company>($"Select * From Companies Where Name Like '%' + @Name + '%'", new {Name = name}).ToList();
         }
 
