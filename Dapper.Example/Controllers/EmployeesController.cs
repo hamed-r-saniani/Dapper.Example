@@ -53,7 +53,7 @@ namespace Dapper.Example.Controllers
         }
 
         // GET: Employees/Create
-        public IActionResult Create()
+        public IActionResult Create() 
         {
             ViewBag.CompanyId = new SelectList(_companyRepository.GetAll(), "CompanyId", "Name");
             return View();
@@ -69,7 +69,7 @@ namespace Dapper.Example.Controllers
         {
             if (ModelState.IsValid)
             {
-                _employeeRepository.Add(Employee);
+                await _employeeRepository.AddAsync(Employee);
                 return RedirectToAction(nameof(Index));
             }
             ViewBag.CompanyId = new SelectList(_companyRepository.GetAll(), "CompanyId", "Name");
