@@ -1,9 +1,11 @@
 ﻿using Dapper.Example.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Transactions;
 
 namespace Dapper.Example.Repository
 {
@@ -22,15 +24,6 @@ namespace Dapper.Example.Repository
             int id = db.Query<int>(query,command).SingleOrDefault();
             command.CompanyId = id;
 
-            //foreach (var item in command.Employees)
-            //{
-            //    item.CompanyId = command.CompanyId;
-            //    string queryEm = "Insert Into Employees(Name,Email,Phone,Title,CompanyId) values(@Name,@Email,@Phone,@Title,@CompanyId);"
-            //        + "Select CAST(SCOPE_IDENTITY() AS int);";
-
-            //    int employeeId =  db.Query<int>(queryEm, item).SingleOrDefault();
-            //}
-
             command.Employees.Select(c =>
             {
                 c.CompanyId = id;
@@ -39,6 +32,34 @@ namespace Dapper.Example.Repository
             string queryEm = "Insert Into Employees(Name,Email,Phone,Title,CompanyId) values(@Name,@Email,@Phone,@Title,@CompanyId);"
                              + "Select CAST(SCOPE_IDENTITY() AS int);";
             db.Execute(queryEm,command.Employees);
+        }
+
+        public void AddTestRecordsWithTransaction(Company command)
+        {
+            using (var trans = new TransactionScope())
+            {
+                try
+                {
+                    string query = "Insert Into Companies (Name,Address,City,State,PostalCode) values(@Name,@Address,@City,@State,@PostalCode);"
+                                   + "Select CAST(SCOPE_IDENTITY() AS int);";
+                    int id = db.Query<int>(query, command).SingleOrDefault();
+                    command.CompanyId = id;
+
+                    command.Employees.Select(c =>
+                    {
+                        c.CompanyId = id;
+                        return c;
+                    }).ToList();
+                    string queryEm = "Insert Into Employees(Name,Email,Phone,Title,CompanyId) values(@Name,@Email,@Phone,@Title,@CompanyId);"
+                                     + "Select CAST(SCOPE_IDENTITY() AS int);";
+                    db.Execute(queryEm, command.Employees);
+
+                    trans.Complete(); // if try not complete it will rollback
+                }
+                catch (Exception ex)
+                {
+                }
+            }
         }
 
         public List<Company> GetAllCompanyWithEmployees()

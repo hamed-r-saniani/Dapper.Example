@@ -66,7 +66,7 @@ namespace Dapper.Example.Controllers
                 Phone = "Test Phone 2",
                 Title = "Test Title 2"
             });
-            _bonusRepository.AddTestRecords(company);
+            _bonusRepository.AddTestRecordsWithTransaction(company);
 
             return RedirectToAction("Index");
         }
