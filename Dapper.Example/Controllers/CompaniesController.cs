@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Dapper.Example.Models;
 using Dapper.Example.Repository;
+using System.Data;
 
 namespace Dapper.Example.Controllers
 {
@@ -11,17 +12,20 @@ namespace Dapper.Example.Controllers
     {
         private readonly ICompanyRepository _context;
         private readonly IBonusRepository _bonusRepository;
+        private readonly IDapperGenericRepository _dapperGenericRepository;
 
-        public CompaniesController(ICompanyRepository context, IBonusRepository bonusRepository)
+        public CompaniesController(ICompanyRepository context, IBonusRepository bonusRepository, IDapperGenericRepository dapperGenericRepository)
         {
             _context = context;
             _bonusRepository = bonusRepository;
+            _dapperGenericRepository = dapperGenericRepository;
         }
 
         // GET: Companies
         public async Task<IActionResult> Index()
         {
-            return View( _context.GetAll());
+            //return View( _context.GetAll());
+            return View(_dapperGenericRepository.List<Company>("usp_GetAllCompany"));
         }
 
         // GET: Companies/Details/5
@@ -32,7 +36,8 @@ namespace Dapper.Example.Controllers
                 return NotFound();
             }
 
-            var company = _bonusRepository.GetCompanyWithEmployees(id.Value);
+            //var company = _bonusRepository.GetCompanyWithEmployees(id.Value);
+            var company = _dapperGenericRepository.Single<Company>("usp_GetCompany", new {CompanyId = id.GetValueOrDefault()});
             if (company == null)
             {
                 return NotFound();
@@ -56,7 +61,15 @@ namespace Dapper.Example.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(company);
+                //_context.Add(company);
+                var parameters = new DynamicParameters();
+                parameters.Add("@CompanyId", 0, DbType.Int32, direction: ParameterDirection.Output);
+                parameters.Add("@Name", company.Name);
+                parameters.Add("@Address", company.Address);
+                parameters.Add("@City", company.City);
+                parameters.Add("@State", company.State);
+                parameters.Add("@PostalCode", company.PostalCode);
+                _dapperGenericRepository.Execute("usp_AddCompany", parameters);
                 return RedirectToAction(nameof(Index));
             }
             return View(company);

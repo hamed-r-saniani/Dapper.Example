@@ -33,6 +33,7 @@ namespace Dapper.Example
             services.AddScoped<ICompanyRepository, CompanyRepositoryDapperContrib>();
             services.AddScoped<IEmployeeRepository, EmployeeRepositoryDapper>();
             services.AddScoped<IBonusRepository, BonusRepository>();
+            services.AddScoped<IDapperGenericRepository, DapperGenericRepository>();
             services.AddDbContext<ApplicationDbContext>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString("DapperExample"));
